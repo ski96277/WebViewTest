@@ -1,4 +1,4 @@
-package imransk.ml.webviewtest;
+package imransk.ml.zealsolutions;
 
 import org.junit.Test;
 

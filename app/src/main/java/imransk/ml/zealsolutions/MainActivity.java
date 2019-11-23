@@ -1,41 +1,43 @@
-package imransk.ml.webviewtest;
+package imransk.ml.zealsolutions;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
-import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
     WebView takeURL;
     ProgressBar progressBar;
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading....");
+        progressDialog.setCancelable(false);
+
+
+        if (!CheckNetwork.isInternetAvailable(this)) {
+            Toast.makeText(this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setMax(100);
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         takeURL = (WebView) findViewById(R.id.webView);
-
 
 
         //Web View Mechanism
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         this.takeURL.getSettings().setPluginState(WebSettings.PluginState.ON);
 
 
-        takeURL.loadUrl("https://radio.net.bd/");
+        takeURL.loadUrl("https://zealsolutions.ca/");
         takeURL.getSettings().setMediaPlaybackRequiresUserGesture(true);
 
         takeURL.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 webView.loadUrl("about:blank");
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                 alertDialog.setTitle("Opps !!");
-                alertDialog.setMessage("Check your Wi-Fi or, Data Connection and try again.\n\nOtherwise Check your web URL");
+                alertDialog.setMessage("Check your Wi-Fi or, Data Connection and try again.");
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Try Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
@@ -119,10 +120,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
+    // This method is used to detect back button
+    @Override
+    public void onBackPressed() {
+        if (takeURL.canGoBack()) {
+            takeURL.goBack();
+        } else {
+
+            finish();
+
+        }
+    }//End Back button press for exit...
 
     public class ourViewClient extends WebViewClient {
 
@@ -137,28 +147,21 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (!CheckNetwork.isInternetAvailable(MainActivity.this)){
+                Toast.makeText(MainActivity.this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+
+            progressDialog.show();
             super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
+
+            progressDialog.dismiss();
             super.onPageFinished(view, url);
 
         }
     }
-
-
-
-    // This method is used to detect back button
-    @Override
-    public void onBackPressed() {
-        if(takeURL.canGoBack()) {
-            takeURL.goBack();
-        }else {
-
-            finish();
-
-        }
-    }//End Back button press for exit...
 
 }
