@@ -21,7 +21,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     WebView takeURL;
     ProgressBar progressBar;
-    ProgressDialog progressDialog;
+//    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        progressDialog = new ProgressDialog(this);
+      /*  progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(false);*/
 
 
         if (!CheckNetwork.isInternetAvailable(this)) {
@@ -151,14 +151,14 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
             }
 
-            progressDialog.show();
+//            progressDialog.show();
             super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
 
-            progressDialog.dismiss();
+//            progressDialog.dismiss();
             super.onPageFinished(view, url);
 
         }
